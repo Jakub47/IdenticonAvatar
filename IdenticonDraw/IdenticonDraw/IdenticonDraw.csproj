@@ -53,8 +53,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="forIdenticon\1.png" />
     <Content Include="Shapes075.jpg" />
-    <Content Include="Shapes075.png" />
+    <Content Include="yos.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
