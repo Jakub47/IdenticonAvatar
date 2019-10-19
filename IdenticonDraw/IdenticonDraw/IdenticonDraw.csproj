@@ -51,10 +51,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="forIdenticon\Thumbs.db" />
+    <None Include="How to Change Pixel Color of an Image in C#.NET - Stack Overflow.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="forIdenticon\1.png" />
+    <Content Include="forIdenticon\10.png" />
+    <Content Include="forIdenticon\11.png" />
+    <Content Include="forIdenticon\12.png" />
+    <Content Include="forIdenticon\13.png" />
+    <Content Include="forIdenticon\14.png" />
+    <Content Include="forIdenticon\15.png" />
+    <Content Include="forIdenticon\16.png" />
+    <Content Include="forIdenticon\2.png" />
+    <Content Include="forIdenticon\3.png" />
+    <Content Include="forIdenticon\4.png" />
+    <Content Include="forIdenticon\5.png" />
+    <Content Include="forIdenticon\6.png" />
+    <Content Include="forIdenticon\7.png" />
+    <Content Include="forIdenticon\8.png" />
+    <Content Include="forIdenticon\9.png" />
     <Content Include="Shapes075.jpg" />
+    <Content Include="tos1.png" />
     <Content Include="yos.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

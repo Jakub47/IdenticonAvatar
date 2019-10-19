@@ -3,39 +3,64 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 
 public class Program
 {
+    ///https://stackoverflow.com/questions/17208254/how-to-change-pixel-color-of-an-image-in-c-net
+    public static Bitmap ChangeColor(Bitmap scrBitmap,Color newColorToApply)
+    {
+        Color actualColor;
+        //make an empty bitmap the same size as scrBitmap
+        Bitmap newBitmap = new Bitmap(scrBitmap.Width, scrBitmap.Height);
+        for (int i = 0; i < scrBitmap.Width; i++)
+        {
+            for (int j = 0; j < scrBitmap.Height; j++)
+            {
+                //get the pixel from the scrBitmap image
+                actualColor = scrBitmap.GetPixel(i, j);
+                // > 150 because.. Images edges can be of low pixel colr. if we set all pixel color to new then there will be no smoothness left.
+                if (actualColor.A > 150)
+                    newBitmap.SetPixel(i, j, newColorToApply);
+                else
+                    newBitmap.SetPixel(i, j, actualColor);
+            }
+        }
+        newBitmap.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\tos1.png");
+
+        return newBitmap;
+    }
+
+
     static void Main(string[] args)
     {
         //Prepare main image 
-        Bitmap mainImage = new Bitmap(100, 100);
+        Bitmap mainImage = new Bitmap(60, 60);
         Graphics newGraphics = Graphics.FromImage(mainImage);
         newGraphics.Clear(Color.White); //Set background color to white
-       
         
 
-
         //create hash
-        string nameOfUser = "Jordan";
+        string nameOfUser = "Jakub Bergmann";
         string hash = "";
         using (MD5 md5 = MD5.Create())
         {
             hash = GetMd5Hash(md5, nameOfUser);
         }
+        var source = hash.GetHashCode();
 
-        List<int> hashedValues = new List<int>();
 
-        for (int i = 6; i < 30; i++)
-        {
-            if (hashedValues.Count == 16) break;
-            hashedValues.Add(int.Parse(hash.Substring(i, 2), System.Globalization.NumberStyles.HexNumber));
-        }
-        
+        int centerindex = source & 3; // 2 lowest bits
+        int sideindex = (source >> 2) & 15; // next 4 bits for side shapes
+        int cornerindex = (source >> 6) & 15; // next 4 for corners
+        int siderot = (source >> 10) & 3; // 2 bits for side offset rotation
+        int cornerrot = (source >> 12) & 3; // 2 bits for corner offset rotation
+
 
         //Create Main colour for pixels
         var color1 = int.Parse(hash.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
@@ -43,45 +68,112 @@ public class Program
         var color3 = int.Parse(hash.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
         Color newColor = Color.FromArgb(color1, color2, color3);
 
-        // Get Pixel
-        Image imageFile = Image.FromFile(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\1.png");
-        Graphics newGraphics1 = Graphics.FromImage(imageFile);
-        newGraphics1.Clear(newColor); //Set background color to white
+        var imagesToPlace = new Bitmap[16];
+        var centerImages = new Bitmap[4];
+
+        int countForCenter = 0;
+        for (int i = 1; i <= 16; i++)
+        {
+            Bitmap imageFile = (Bitmap)Image.FromFile(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\" + i.ToString() + ".png");
+            imageFile = ChangeColor(imageFile, newColor);
+            imagesToPlace[i - 1] = imageFile;
+
+            if(i == 1 || i == 5 || i == 9 || i == 16)
+            {
+                centerImages[countForCenter] = imageFile;
+                countForCenter++;
+            }
+        }
 
 
         using (Graphics g = Graphics.FromImage(mainImage))
         {
-            int vertical = 0;
-            int horizontal = 0;
+            int centerHor = 20;
+            int centerVer = 20;
+            g.DrawImage(centerImages[centerindex], centerVer, centerHor);
 
-            hashedValues.ForEach(a =>
-            {
-                if(vertical == 60)
-                    Console.WriteLine("yos");
-                
-                if(a % 2 == 0 && horizontal < 60)
-                {
-                    g.DrawImage(imageFile, horizontal, vertical);
-                    if(horizontal != 60)
-                        g.DrawImage(imageFile, 80 - horizontal, vertical);
-                    mainImage.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos.png");
-                }
+            // sideImage.RotateFlip(RotateFlipType.Rotate90FlipY); to da na prawo
+            // sideImage.RotateFlip(RotateFlipType.Rotate180FlipX);  to da dół
 
-                if (horizontal >= 60)
-                {
-                    vertical += 20;
-                    horizontal = 0;
-                }
-                else
-                    horizontal += 20; 
+            //sideImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            //g.DrawImage(sideImage, 20, 0);
 
-            });
+            //<vertical,horizontal>
+            //var listOfSideLocations = new List<KeyValuePair<int, int>>()
+            //{
+            //    new KeyValuePair<int, int>(0,20),
+            //    new KeyValuePair<int, int>(40,20),
+            //    new KeyValuePair<int, int>(20,40),
+            //};
+
+            //var z = listOfSideLocations.ToLookup()
+            //var sideLocation = new Lookup<int, int>();
+            //sideLocation.Add(0, 40); sideLocation.Add(20, 0); sideLocation.Add(20, 60); sideLocation.Add(60, 40);
+
+            var sideImage = imagesToPlace[sideindex];
+            sideImage = InitalizeFirstRotation(sideImage, siderot);
+            g.DrawImage(sideImage, 20, 0);
+            var sideImageNextRot = new Bitmap(sideImage);
+            sideImageNextRot.RotateFlip(RotateFlipType.Rotate90FlipNone); //Rotate image to right
+            g.DrawImage(sideImageNextRot, 40,20);
+            sideImage.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            g.DrawImage(sideImage, 20, 40);
+            sideImageNextRot.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            g.DrawImage(sideImageNextRot, 0, 20);
+
+
+            var cornerImage = imagesToPlace[cornerindex];
+            cornerImage = InitalizeFirstRotation(cornerImage, siderot);
+            g.DrawImage(cornerImage, 0, 0);
+
+
+
+            var cornerImageNextRot = new Bitmap(cornerImage);
+            cornerImageNextRot.RotateFlip(RotateFlipType.Rotate90FlipNone); //Rotate image to right
+            g.DrawImage(cornerImageNextRot, 40, 0);
+
+
+            cornerImage.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            g.DrawImage(cornerImage, 40, 40);
+
+            cornerImageNextRot.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            g.DrawImage(cornerImageNextRot, 0, 40);
+            
+
+            //foreach (KeyValuePair<int, int> item in listOfSideLocations)
+            //{
+            //    //var tmp = new Bitmap(sideImage);
+            //    sideImage.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            //    g.DrawImage(sideImage, item.Key, item.Value);
+            //}
+
+
+            //int vertical = 0;
+            //int horizontal = 0;
+
+            //hashedValues.ForEach(a =>
+            //{
+            //    if (a % 2 == 0 && horizontal < 40)
+            //    {
+            //        g.DrawImage(imageFile, horizontal, vertical);
+            //        if (horizontal != 20)
+            //            g.DrawImage(imageFile, 40 - horizontal, vertical);
+            //        mainImage.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\tos1.png");
+            //    }
+
+            //    if (horizontal >= 20)
+            //    {
+            //        vertical += 20;
+            //        horizontal = 0;
+            //    }
+            //    else
+            //        horizontal += 20;
+
+            //});
         }
 
-        K:
-        Console.WriteLine("das");
 
-        //mainImage.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos.png");
+        mainImage.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos.png");
 
         //// Loop through the images pixels to reset color.
 
@@ -130,7 +222,7 @@ public class Program
         //image1 = new Bitmap(400, 400);
         //Random random = new Random();
 
-        
+
 
         //var color1 = int.Parse(hash.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         //var color2 = int.Parse(hash.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
@@ -234,6 +326,15 @@ public class Program
         //    }
         //}
 
+    }
+
+    private static Bitmap InitalizeFirstRotation(Bitmap tmp, int siderot)
+    {
+        for (int i = 0; i < siderot; i++)
+        {
+            tmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+        }
+        return tmp;
     }
 
     static string GetMd5Hash(MD5 md5Hash, string input)
