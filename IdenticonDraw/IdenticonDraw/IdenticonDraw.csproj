@@ -71,9 +71,9 @@
     <Content Include="forIdenticon\7.png" />
     <Content Include="forIdenticon\8.png" />
     <Content Include="forIdenticon\9.png" />
-    <Content Include="Shapes075.jpg" />
-    <Content Include="tos1.png" />
-    <Content Include="yos.png" />
+    <Content Include="yos1.png" />
+    <Content Include="yos2.png" />
+    <Content Include="yos3.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
