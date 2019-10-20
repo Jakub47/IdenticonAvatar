@@ -46,7 +46,7 @@ public class Program
         
 
         //create hash
-        string nameOfUser = "Jakub Bergmann";
+        string nameOfUser = "Jakub4";
         string hash = "";
         using (MD5 md5 = MD5.Create())
         {
@@ -61,6 +61,15 @@ public class Program
         int siderot = (source >> 10) & 3; // 2 bits for side offset rotation
         int cornerrot = (source >> 12) & 3; // 2 bits for corner offset rotation
 
+        //Make sure that rotation of side images is diffrent from corent images
+        if (siderot == cornerrot)
+        {
+            cornerrot++;
+            if(cornerrot > 16)
+            {
+                cornerrot -= 2;
+            }
+        }
 
         //Create Main colour for pixels
         var color1 = int.Parse(hash.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
@@ -123,7 +132,7 @@ public class Program
 
 
             var cornerImage = imagesToPlace[cornerindex];
-            cornerImage = InitalizeFirstRotation(cornerImage, siderot);
+            cornerImage = InitalizeFirstRotation(cornerImage, cornerrot);
             g.DrawImage(cornerImage, 0, 0);
 
 
