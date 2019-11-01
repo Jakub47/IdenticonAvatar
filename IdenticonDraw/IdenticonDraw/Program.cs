@@ -31,7 +31,6 @@ public class Program
                     newBitmap.SetPixel(i, j, actualColor);
             }
         }
-        newBitmap.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\tos1.png");
 
         return newBitmap;
     }
@@ -39,16 +38,16 @@ public class Program
 
     static void Main(string[] args)
     {
-        string username = "Jakub Bergmann";
+        string username = "jakub7249@gmail.com";
 
 
         var img1 = GenerateNormalImage(username);
         var img2 = GenerateCustomImage(username);
         var img3 = GenerateSimpleImage(username);
 
-        img1.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos1.png");
-        img2.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos2.png");
-        img3.Save(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos3.png");
+        img1.Save(@"C:\Users\Ragnus\Desktop\PI\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos1.png");
+        img2.Save(@"C:\Users\Ragnus\Desktop\PI\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos2.png");
+        img3.Save(@"C:\Users\Ragnus\Desktop\PI\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\yos3.png");
 
         //    //Prepare main image 
         //    Bitmap mainImage = new Bitmap(60, 60);
@@ -246,7 +245,7 @@ public class Program
         Color newColor = Color.FromArgb(color1, color2, color3);
 
         // Get Pixel
-        Image imageFile = Image.FromFile(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\16.png");
+        Image imageFile = Image.FromFile(@"C:\Users\Ragnus\Desktop\PI\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\16.png");
         Graphics newGraphics1 = Graphics.FromImage(imageFile);
         newGraphics1.Clear(newColor); //Set background color to white
 
@@ -326,7 +325,7 @@ public class Program
             int countForCenter = 0;
             for (int i = 1; i <= 16; i++)
             {
-                Bitmap imageFile = (Bitmap)Image.FromFile(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\" + i.ToString() + ".png");
+                Bitmap imageFile = (Bitmap)Image.FromFile(@"C:\Users\Ragnus\Desktop\PI\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\" + i.ToString() + ".png");
                 imageFile = ChangeColor(imageFile, newColor);
                 imagesToPlace[i - 1] = imageFile;
 
@@ -424,8 +423,8 @@ public class Program
 
         int countForCenter = 0;
         for (int i = 1; i <= 16; i++)
-        {
-            Bitmap imageFile = (Bitmap)Image.FromFile(@"C:\Users\Ragnus\Desktop\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\" + i.ToString() + ".png");
+        { 
+            Bitmap imageFile = (Bitmap)Image.FromFile(@"C:\Users\Ragnus\Desktop\PI\Identicon\IdenticonAvatar\IdenticonDraw\IdenticonDraw\forIdenticon\" + i.ToString() + ".png");
             imageFile = ChangeColor(imageFile, newColor);
             imagesToPlace[i - 1] = imageFile;
 
